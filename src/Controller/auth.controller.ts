@@ -1,6 +1,8 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from '../Auth/auth.service';
 import { UserService } from '../Services/user.service';
+import { RegisterDto } from '../DTO/RegisterDTO';
+import { LoginDto } from '../DTO/LoginDTO';
 
 @Controller('auth')
 export class AuthController {
@@ -10,14 +12,14 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  register(@Body() userData: any) {
-    const user = this.userService.create(userData);
+  async register(@Body() userData: RegisterDto) {
+    const user = await this.userService.create(userData);
     return { message: 'Usuário registrado com sucesso!', user };
   }
 
   @Post('login')
-  login(@Body() loginData: any) {
-    const user = this.authService.validateUser(loginData.email, loginData.senha);
+  async login(@Body() loginData: LoginDto) {
+    const user = await this.authService.validateUser(loginData.email, loginData.senha);
     if (!user) {
       return { message: 'Credenciais inválidas!' };
     }
